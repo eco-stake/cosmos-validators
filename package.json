@@ -1,0 +1,48 @@
+{
+  "name": "cosmos-validators",
+  "scripts": {
+    "start": "npx parcel src/index.html",
+    "build": "npx parcel build src/index.html --no-scope-hoist"
+  },
+  "devDependencies": {
+    "@parcel/packager-raw-url": "^2.4.1",
+    "@parcel/transformer-sass": "^2.4.1",
+    "@parcel/transformer-webmanifest": "^2.4.1",
+    "parcel": "^2.4.1",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "@bugsnag/js": "^7.16.2",
+    "@bugsnag/plugin-react": "^7.16.2",
+    "axios": "^0.26.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-app-polyfill": "^3.0.0",
+    "react-dom": "^17.0.2",
+    "react-github-btn": "^1.2.2",
+    "react-moment": "^1.1.1",
+    "react-redux": "^7.2.8",
+    "react-router-dom": "^6.3.0",
+    "redux": "^4.1.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
