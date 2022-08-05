@@ -3,11 +3,13 @@ import 'core-js'
 import Bugsnag from '@bugsnag/js'
 import BugsnagPluginReact from '@bugsnag/plugin-react'
 import React from 'react'
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux'
 import store from './store'
 import App from "./App";
 
+const container = document.getElementById('root');
+const root = createRoot(container);
 const app = (
   <Provider store={store}>
     <App />
@@ -25,15 +27,13 @@ if (process.env.BUGSNAG_KEY) {
   const ErrorBoundary = Bugsnag.getPlugin('react')
     .createErrorBoundary(React)
 
-  ReactDOM.render(
+  root.render(
     <ErrorBoundary>
       {app}
-    </ErrorBoundary>,
-    document.getElementById('root')
+    </ErrorBoundary>
   );
 } else {
-  ReactDOM.render(
-    app,
-    document.getElementById('root')
+  root.render(
+    app
   );
 }
