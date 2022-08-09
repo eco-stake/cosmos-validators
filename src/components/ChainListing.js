@@ -3,23 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { AgGridReact } from 'ag-grid-react';
 import GridHeader from './GridHeader';
 import AppHeader from './AppHeader';
-import ValidatorName from './ValidatorName';
+import {divide, pow} from 'mathjs'
+import ChainName from './ChainName';
 
-function ValidatorChainsRenderer (params) {
-  return params.value.map(validator => {
-    const chain = validator.chain
-    if (!chain) return null
-
-    return (
-      <span key={chain.path}>
-        <img src={chain.image} width={20} height={20} className="rounded-circle" />
-      </span>
-    )
-  })
-  ;
-}
-
-function RegistryValidatorListing(props) {
+function ChainListing(props) {
   const { validators, chains } = props
 
   const navigate = useNavigate();
@@ -28,28 +15,22 @@ function RegistryValidatorListing(props) {
   const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
   const [rowData, setRowData] = useState();
   const [columnDefs, setColumnDefs] = useState([
-    { field: 'name', cellRenderer: ValidatorName, flex: 2, headerName: 'Validator Name' },
-    { 
-      field: 'activeChains', 
-      filterValueGetter: params => params.data.activeChains.map(el => el.name), 
-      cellRenderer: ValidatorChainsRenderer, 
-      headerName: 'Active Chains', 
-      flex: 2 
-    },
-    { field: 'averageRank', valueFormatter: params => {
-      return params.value?.toLocaleString(undefined, { maximumFractionDigits: 1 })
+    { field: 'name', cellRenderer: ChainName, flex: 2, headerName: 'Chain Name' },
+    { field: 'height' },
+    { field: 'params.actual_block_time', headerName: 'Block Time', valueFormatter: params => {
+      return params.value?.toLocaleString(undefined, { maximumFractionDigits: 2 })
     } },
-    { field: 'averageUptime', valueFormatter: params => {
+    { field: 'params.max_validators', headerName: 'Max Validators' },
+    { field: 'params.total_supply', headerName: 'Total Tokens', valueFormatter: params => {
+      if(!params.value) return null
+      const value = divide(params.value, pow(10, params.data.decimals))
+      return `${value.toLocaleString(undefined, { maximumFractionDigits: 0 })} ${params.data.symbol}`
+    } },
+    { field: 'params.bonded_ratio', headerName: 'Staked %', valueFormatter: params => {
       if(!params.value) return null
 
       const value = params.value * 100
       return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
-    }  },
-    { field: 'totalSlashes' },
-    { field: 'total_users', headerName: 'Total Users' },
-    { field: 'total_usd', headerName: 'Total USD', valueFormatter: params => {
-      if(!params.value) return null
-      return `$${params.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
     } },
   ]);
   const defaultColDef = useMemo(() => {
@@ -62,8 +43,8 @@ function RegistryValidatorListing(props) {
   }, []);
 
   const onGridReady = useCallback((params) => {
-    setRowData(validators)
-  }, [validators]);
+    setRowData(Object.values(chains))
+  }, [chains]);
 
   const onFilterTextBoxChanged = useCallback(() => {
     gridRef.current.api.setQuickFilter(
@@ -73,10 +54,10 @@ function RegistryValidatorListing(props) {
 
   return (
     <>
-      <AppHeader active="validators" />
+      <AppHeader active="chains" />
       <div style={containerStyle}>
         <GridHeader onFilterTextBoxChanged={onFilterTextBoxChanged} breadcrumbs={[
-          <li key="validators" className="breadcrumb-item active" aria-current="page">Validators</li>,
+          <li key="chains" className="breadcrumb-item active" aria-current="page">Chains</li>,
         ]} />
         {validators && chains ? (
           <div style={gridStyle} className="ag-theme-alpine">
@@ -90,7 +71,7 @@ function RegistryValidatorListing(props) {
               // enableCellTextSelection={true}
               // ensureDomOrder={true}
               onGridReady={onGridReady}
-              onRowClicked={(row) => navigate(`/${row.data.path}`)}
+              onRowClicked={(row) => navigate(`/chains/${row.data.path}`)}
             ></AgGridReact>
           </div>
         ) : (
@@ -103,4 +84,4 @@ function RegistryValidatorListing(props) {
   );
 }
 
-export default RegistryValidatorListing
+export default ChainListing

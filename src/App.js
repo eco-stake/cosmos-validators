@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 
 import RegistryValidatorListing from "./components/RegistryValidatorListing";
 
@@ -12,6 +12,9 @@ import './scss/style.scss'
 
 import RegistryValidator from "./models/RegistryValidator";
 import Chain from "./models/Chain";
+import ChainListing from "./components/ChainListing";
+import ChainShow from "./components/ChainShow";
+import RegistryValidatorShow from "./components/RegistryValidatorShow";
 
 const loading = (
   <div className="pt-3 text-center">
@@ -26,12 +29,12 @@ function App() {
   const directory = CosmosDirectory()
 
   useEffect(() => {
-    if(!validators){
+    if(chains && !validators){
       directory.getValidators().then(data => {
-        setValidators(data.validators.map(el => RegistryValidator(el)))
+        setValidators(data.validators.map(el => RegistryValidator(el, chains)).filter(el => el.validators.length > 0))
       })
     }
-  }, [validators]);
+  }, [chains, validators]);
 
   useEffect(() => {
     if(!chains){
@@ -43,25 +46,15 @@ function App() {
 
   return (
     <div className="container">
-      <div className="intro-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 className="display-4">Cosmos Validators ⚛</h1>
-        <p className="lead">Highlighting validator performance and contributions across the Cosmos</p>
-        <ul className="nav nav-pills justify-content-center">
-          <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="#">Validators</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#">Chains</a>
-          </li>
-        </ul>
-      </div>
       <BrowserRouter>
         <Suspense fallback={loading}>
           <Routes>
             <Route path="*" element={<RegistryValidatorListing validators={validators} chains={chains} />} />
-            {/* <Route path="/:validator" element={<RegistryValidator />} />
-            <Route path="/chains" element={<Chains />} />
-            <Route path="/chains/:chain" element={<Chain />} /> */}
+            <Route path="/:registryValidator" element={<RegistryValidatorShow validators={validators} chains={chains} directory={directory} />} />
+            <Route path="/:registryValidator/:chainValidator" element={<RegistryValidatorShow validators={validators} chains={chains} directory={directory} />} />
+            <Route path="/chains" element={<ChainListing validators={validators} chains={chains} />} />
+            <Route path="/chains/:chain" element={<ChainShow validators={validators} chains={chains} directory={directory} />} />
+            <Route path="/chains/:chain/:chainValidator" element={<ChainShow validators={validators} chains={chains} directory={directory} />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

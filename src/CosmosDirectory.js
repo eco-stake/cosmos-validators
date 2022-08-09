@@ -57,6 +57,11 @@ function CosmosDirectory(){
       .then(res => res.data)
   }
 
+  function getValidator(path){
+    return axios.get([validatorsUrl, path].join('/'))
+      .then(res => res.data)
+  }
+
   return {
     rpcUrl,
     restUrl,
@@ -68,7 +73,8 @@ function CosmosDirectory(){
     getChainData,
     getChainAssetlist,
     getChainValidators,
-    getValidators
+    getValidators,
+    getValidator
   }
 }
 
