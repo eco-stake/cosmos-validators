@@ -2,11 +2,11 @@ import _ from 'lodash'
 
 function Coins(props) {
   const { asset, coins, fullPrecision, inBaseDenom, hideValue, className } = props
-  const { decimals, symbol, prices } = asset
+  const { decimals, symbol, prices } = asset || {}
   const { coingecko } = prices || {}
 
   let coinAmount = coins
-  if(coins.amount) coinAmount = coins.amount
+  if(coins?.amount) coinAmount = coins.amount
 
   function amount(coinAmount){
     if(inBaseDenom) return coinAmount

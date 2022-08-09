@@ -17,7 +17,7 @@ function ChainValidatorGrid(props) {
     },
     {
       field: 'commission.rate', valueFormatter: params => {
-        return `${params.value && (params.value * 100).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
+        return params.value && `${(params.value * 100).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
       }, headerName: 'Fee'
     },
     {
@@ -43,7 +43,7 @@ function ChainValidatorGrid(props) {
         return `$${params.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
       }
     },
-    { field: 'public_nodes', cellRenderer: ValidatorPublicNodes, headerName: 'Public APIs',
+    { field: 'public_nodes', cellRenderer: ValidatorPublicNodes, headerName: 'Public Nodes',
       valueGetter: params => Object.values(params.data.public_nodes || {}),
       filterValueGetter: params => Object.keys(params.data.public_nodes || {})  }
   ]);

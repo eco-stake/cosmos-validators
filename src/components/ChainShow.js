@@ -21,7 +21,9 @@ function ChainShow(props) {
   const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
   useEffect(() => {
-    if(params.chain && chains && !chain){
+    if(params.chain && chains && (!chain || chain.path !== params.chain)){
+      setChainValidators()
+      setChainValidator()
       setChain(chains[params.chain])
     }
   }, [params.chain, chains, chain]);

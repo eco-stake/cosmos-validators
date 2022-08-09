@@ -1,6 +1,6 @@
 export default function ChainValidator(data, chain){
   const { delegations } = data
-  const totalSlashes = data.slashes?.length || 0
+  const totalSlashes = data.slashes?.length
   const blockPeriod = data.missed_blocks_periods && data.missed_blocks_periods.slice(-1)[0] 
   const uptime = blockPeriod?.blocks && ((blockPeriod.blocks - blockPeriod.missed) / blockPeriod.blocks)
   const missedBlocks = blockPeriod?.missed

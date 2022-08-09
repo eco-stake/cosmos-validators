@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Modal,
-  Table
+  Table,
+  Button,
+  OverlayTrigger,
+  Tooltip
 } from 'react-bootstrap'
 import Coins from './Coins';
 import ValidatorName from './ValidatorName';
+import ValidatorNetworks from './ValidatorNetworks';
 import ValidatorProfiles from './ValidatorProfiles';
 import ValidatorWebsite from './ValidatorWebsite';
 
 function ChainValidatorModal(props) {
-  const { registryValidator, chainValidator } = props
+  const { registryValidators, chainValidator, chains } = props
+
+  let registryValidator = props.registryValidator
+  if(!registryValidator && registryValidators){
+    registryValidator = registryValidators.find(el => chainValidator && el.path === chainValidator.path)
+  }
 
   const validator = chainValidator
+
+  const navigate = useNavigate();
 
   function uptime() {
     if(!validator.uptime) return 
@@ -21,7 +33,6 @@ function ChainValidatorModal(props) {
     return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
   }
 
-  console.log(validator)
   return (
     <>
       <Modal size='lg' show={props.show} onHide={props.onHide}>
@@ -49,6 +60,33 @@ function ChainValidatorModal(props) {
                       <td>{uptime()}</td>
                     </tr>
                     <tr>
+                      <td scope="row">REStake</td>
+                      <td>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td scope="row">Commission</td>
+                      <td><span className="p-0">{validator.commission ? `${validator.commission.rate * 100}%` : 'Unknown'}</span></td>
+                    </tr>
+                    <tr>
+                      <td scope="row">Voting power</td>
+                      <td><span className="p-0"><Coins coins={validator.tokens} asset={validator.chain.baseAsset} /></span></td>
+                    </tr>
+                    <tr>
+                      <td scope="row">Rank</td>
+                      <td><span className="p-0">#{validator.rank}</span></td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+              <div className="col small">
+                <Table>
+                  <tbody className="table-sm small">
+                    <tr>
+                      <td scope="row">Contact</td>
+                      <td><a className="p-0" href={`mailto:${validator.description?.security_contact}`}>{validator.description?.security_contact}</a></td>
+                    </tr>
+                    <tr>
                       <td scope="row">Website</td>
                       <td className="text-break"><ValidatorWebsite className="text-decoration-underline p-0" validator={validator} /></td>
                     </tr>
@@ -60,39 +98,39 @@ function ChainValidatorModal(props) {
                     </tr>
                     {validator?.path && (
                       <tr>
-                        <td className="align-middle" scope="row">Networks</td>
+                        <td className="align-middle" scope="row">Chains</td>
                         <td className="w-75">
-                          {/* <ValidatorNetworks validator={validator} registryData={registryData} network={network} networks={networks} /> */}
+                          <ValidatorNetworks registryValidator={registryValidator} setChainValidator={(validator) => navigate(`/chains/${validator.chain.path}/${validator.address}`)} />
                         </td>
                       </tr>
                     )}
-                    <tr>
-                      <td scope="row">REStake</td>
-                      <td>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td scope="row">Commission</td>
-                      <td><span className="p-0">{validator.commission.rate * 100}%</span></td>
-                    </tr>
-                    <tr>
-                      <td scope="row">Voting power</td>
-                      <td><span className="p-0"><Coins coins={validator.tokens} asset={validator.chain.baseAsset} /></span></td>
-                    </tr>
-                    <tr>
-                      <td scope="row">Rank</td>
-                      <td><span className="p-0">#{validator.rank}</span></td>
-                    </tr>
-                    <tr>
-                      <td scope="row">Contact</td>
-                      <td><a className="p-0" href={`mailto:${validator.description?.security_contact}`}>{validator.description?.security_contact}</a></td>
-                    </tr>
                   </tbody>
                 </Table>
-              </div>
-              <div className="col small">
                 <p>
-                  {validator.description.details}
+                  {validator.description?.details}
+                </p>
+                <p className="text-end">
+                {props.action ? props.action : (
+                  validator.path ? (
+                    <Link to={`/${validator.path}`} className="btn btn-primary btn-sm">
+                      View full profile
+                    </Link>
+                  ) : (
+                    <OverlayTrigger
+                      placement="top"
+                      rootClose={true}
+                      overlay={
+                        <Tooltip id={`tooltip-registry-${validator.address}`}>This validator hasn't been claimed in the Validator Registry yet.</Tooltip>
+                      }
+                    >
+                      <span>
+                      <Button size="sm" disabled={true}>
+                        View full profile
+                      </Button>
+                      </span>
+                    </OverlayTrigger>
+                  )
+                )}
                 </p>
                 {Object.entries(validator.public_nodes || {}).length > 0 && (
                   <>
