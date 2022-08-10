@@ -100,7 +100,7 @@ function ChainValidatorModal(props) {
                       <tr>
                         <td className="align-middle" scope="row">Chains</td>
                         <td className="w-75">
-                          <ValidatorNetworks registryValidator={registryValidator} setChainValidator={(validator) => navigate(`/chains/${validator.chain.path}/${validator.address}`)} />
+                          <ValidatorNetworks registryValidator={registryValidator} setValidator={props.setValidator || ((validator) => navigate(`/chains/${validator.chain.path}/${validator.address}`))} />
                         </td>
                       </tr>
                     )}
@@ -108,29 +108,6 @@ function ChainValidatorModal(props) {
                 </Table>
                 <p>
                   {validator.description?.details}
-                </p>
-                <p className="text-end">
-                {props.action ? props.action : (
-                  validator.path ? (
-                    <Link to={`/${validator.path}`} className="btn btn-primary btn-sm">
-                      View full profile
-                    </Link>
-                  ) : (
-                    <OverlayTrigger
-                      placement="top"
-                      rootClose={true}
-                      overlay={
-                        <Tooltip id={`tooltip-registry-${validator.address}`}>This validator hasn't been claimed in the Validator Registry yet.</Tooltip>
-                      }
-                    >
-                      <span>
-                      <Button size="sm" disabled={true}>
-                        View full profile
-                      </Button>
-                      </span>
-                    </OverlayTrigger>
-                  )
-                )}
                 </p>
                 {Object.entries(validator.public_nodes || {}).length > 0 && (
                   <>
@@ -155,6 +132,29 @@ function ChainValidatorModal(props) {
                     </Table>
                   </>
                 )}
+                <p className="text-end">
+                  {props.action ? props.action : (
+                    validator.path ? (
+                      <Link to={`/${validator.path}`} className="btn btn-primary btn-sm">
+                        View full profile
+                      </Link>
+                    ) : (
+                      <OverlayTrigger
+                        placement="top"
+                        rootClose={true}
+                        overlay={
+                          <Tooltip id={`tooltip-registry-${validator.address}`}>This validator hasn't been claimed in the Validator Registry yet.</Tooltip>
+                        }
+                      >
+                        <span>
+                          <Button size="sm" disabled={true}>
+                            View full profile
+                          </Button>
+                        </span>
+                      </OverlayTrigger>
+                    )
+                  )}
+                </p>
               </div>
             </div>
           )}

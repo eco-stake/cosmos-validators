@@ -6,7 +6,7 @@ import {
 } from 'react-bootstrap'
 
 function ValidatorNetworks(props) {
-  const { registryValidator, chain, setChainValidator } = props
+  const { registryValidator, chain, setValidator } = props
 
   if(!registryValidator) return null
 
@@ -36,7 +36,7 @@ function ValidatorNetworks(props) {
               <Tooltip id={`tooltip-${validatorNetwork.key}`}>{validatorNetwork.name}</Tooltip>
             }
           >
-            <span role="button" onClick={() => setChainValidator(validatorNetwork.validator)}>
+            <span role="button" onClick={() => setValidator(validatorNetwork.validator)}>
               {validatorNetwork.image}
             </span>
           </OverlayTrigger>

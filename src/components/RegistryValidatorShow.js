@@ -50,6 +50,10 @@ function RegistryValidatorShow(props) {
   const { profile, services } = registryValidator || {}
   const { description, contacts } = profile || {}
 
+  function setValidator(validator){
+    navigate(`/${registryValidator.path}/${validator.address}`)
+  }
+
   return (
     <>
       <AppHeader active="validators" />
@@ -92,7 +96,7 @@ function RegistryValidatorShow(props) {
                     </tr>
                     <tr>
                       <td scope="row">Networks</td>
-                      <td><span className="p-0"><ValidatorNetworks registryValidator={registryValidator} setChainValidator={(validator) => navigate(`/${registryValidator.path}/${validator.address}`)} /></span></td>
+                      <td><span className="p-0"><ValidatorNetworks registryValidator={registryValidator} setValidator={setValidator} /></span></td>
                     </tr>
                     {contacts?.others && (
                       Object.entries(contacts.others).map(([label, value]) => {
@@ -226,6 +230,7 @@ function RegistryValidatorShow(props) {
         registryValidator={registryValidator} 
         show={!!chainValidator} 
         onHide={() => navigate(`/${registryValidator.path}`)} 
+        setValidator={setValidator}
         action={chainValidator && (
           <Link to={`/chains/${chainValidator.chain.path}`} className="btn btn-primary btn-sm">
             All {chainValidator.chain.pretty_name} Validators
